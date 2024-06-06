@@ -3,7 +3,6 @@
 import { program } from "commander";
 import chalk from "chalk";
 import inquirer from "inquirer";
-import ora from "ora";
 import figlet from "figlet";
 import { createFlutterProject } from "../src/flutter/create_project.js";
 
@@ -41,11 +40,7 @@ program.action(async () => {
           console.log(chalk.red(`Plataformas disponíveis:`));
       }
 
-      const spinner = ora(`Doing ${answers.choice}...`).start(); // Start the spinner
 
-      setTimeout(() => {
-        spinner.succeed(chalk.green("Done!"));
-      }, 3000);
     });
   });
 

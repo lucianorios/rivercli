@@ -1,4 +1,6 @@
 import { input, select, Separator } from '@inquirer/prompts';
+import { execCommand } from '../flutter/exec_command.js';
+
 export const createFlutterProject = async () => {
     console.log("Iniciando configuração de projeto Flutter");
 
@@ -58,18 +60,6 @@ export const createFlutterProject = async () => {
     ],
   });
 
-  let flutter_command = 'flutter create ';
-
-  if(project_type == 'package') {
-    flutter_command += '--template=package ';
-  }
-
-  if(organization != '' && organization != undefined) {
-    flutter_command += `--org ${organization}`;
-  }
-
-  console.log('Comando', `${flutter_command} ${project_name}`);
-
-  console.log(`App name ${project_name}`);
+  execCommand(solution, project_name, organization, project_type);
 
 }
