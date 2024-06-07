@@ -60,6 +60,21 @@ export const createFlutterProject = async () => {
     ],
   });
 
-  execCommand(solution, project_name, organization, project_type);
+  let multi_packages = '';
+
+  if(project_type == 'multi') {
+    multi_packages = await input({
+      message: 'Informe os packages que farão parte do projeto (separados por vírgula):',
+      validate: (value) =>
+        new Promise((resolve) => {
+          setTimeout(
+            () => resolve(value != '' && value != undefined || 'Informe os packages!'),
+            200,
+          );
+        }),
+    });
+  }
+
+  execCommand(solution, project_name, organization, project_type, multi_packages);
 
 }

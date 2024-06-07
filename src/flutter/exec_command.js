@@ -4,10 +4,12 @@ import ora from "ora";
 import { exec as execCb } from "node:child_process";
 import { promisify } from "node:util";
 import fs from 'fs';
+import { addRiverbase } from "./add_riverbase.js";
+import { addPackages } from "./add_packages.js";
 
 const exec = promisify(execCb);
 
-export const execCommand = async (solution_name, project_name, organization, project_type) => {
+export const execCommand = async (solution_name, project_name, organization, project_type, multi_packages) => {
     let flutter_command = 'flutter create ';
 
     if(project_type == 'package') {
@@ -37,7 +39,13 @@ export const execCommand = async (solution_name, project_name, organization, pro
 
       console.log('Projeto criado');
 
-    fs.renameSync(project_name, solution_name);
+      fs.renameSync(project_name, solution_name);
+
+      await addRiverbase(solution_name);
+
+      if(multi_packages != undefined && multi_packages != '') {
+        await addPackages(solution_name, multi_packages);
+      }
 
       spinner.succeed(chalk.green("Done!"));
     }catch(err){
