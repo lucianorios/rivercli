@@ -4,6 +4,9 @@ import { execCommand } from '../flutter/exec_command.js';
 export const createFlutterProject = async () => {
     console.log("Iniciando configuração de projeto Flutter");
 
+    let variables = '';
+    let multi_packages = '';
+
 
     let solution = await input({
         message: 'Informe da pasta do projeto:',
@@ -60,8 +63,6 @@ export const createFlutterProject = async () => {
     ],
   });
 
-  let multi_packages = '';
-
   if(project_type == 'multi') {
     multi_packages = await input({
       message: 'Informe os packages que farão parte do projeto (separados por vírgula):',
@@ -75,6 +76,37 @@ export const createFlutterProject = async () => {
     });
   }
 
-  execCommand(solution, project_name, organization, project_type, multi_packages);
+  let hasEnvironmentVariables = await select({
+    message: 'Adicionar variáveis de ambiente?',
+    choices: [
+      {
+        name: 'Sim',
+        value: 'Sim',
+        description: 'Adicionar variáveis de ambiente',
+      },
+      {
+        name: 'Não',
+        value: 'Nao',
+        description: 'Não adicionar variáveis de ambiente',
+      },
+    ],
+  });
+
+  if(hasEnvironmentVariables == 'Sim') {
+    variables = await input({
+      message: 'Informe as variaveis de ambiente (Ex.: VARIAVEL=valor, VARIAVEL2=valor2):',
+      validate: (value) =>
+        new Promise((resolve) => {
+          setTimeout(
+            () => resolve(value != '' && value != undefined || 'Informe as variaveis!'),
+            200,
+          );
+        }),
+    });
+  }
+
+
+  execCommand(solution, project_name, organization, project_type, multi_packages, variables);
+
 
 }
