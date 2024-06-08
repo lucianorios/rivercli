@@ -22,10 +22,10 @@ const _createEnvironmentConfigurationClass = (variables) => {
 
         ${variables.map(variable => `String get ${variable.property} => _${variable.property};`).join('\n        ')}
 
-        static Environment get instance => _singleton;
-        static final Environment _singleton = Environment._internal();
+        static Environment get instance => _instance;
+        static final Environment _instance = Environment._internal();
 
-        factory Environment() => _singleton;
+        factory Environment() => _instance;
 
         Environment._internal() {
             init();

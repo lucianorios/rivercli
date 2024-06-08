@@ -1,6 +1,7 @@
 
 import { generateVsCodeConfiguration } from "./variables/vscode_configuration.js";
 import { generateEnvironmentConfiguration } from "./variables/environment_configuration.js";
+import { generateEnvironmentConfigurationAndroid } from "./variables/android_configuration.js";
 
 export const addEnvironmentVariables = async (solution_name, variables) => {
     let arrVariable = [];
@@ -11,6 +12,8 @@ export const addEnvironmentVariables = async (solution_name, variables) => {
     });
 
     await generateVsCodeConfiguration(solution_name, arrVariable);
+
+    await generateEnvironmentConfigurationAndroid(solution_name, arrVariable);
 
     await generateEnvironmentConfiguration(solution_name, arrVariable);
 }
