@@ -6,7 +6,19 @@ export const createFlutterProject = async () => {
 
     let variables = '';
     let multi_packages = '';
+    let hasEnvironmentVariables = '';
+    let primaryColor = '';
 
+    let project_title = await input({
+      message: 'Informe título do app:',
+      validate: (value) =>
+        new Promise((resolve) => {
+          setTimeout(
+            () => resolve(value != '' && value != undefined || 'Informe o título!'),
+            200,
+          );
+        }),
+    });
 
     let solution = await input({
         message: 'Informe da pasta do projeto:',
@@ -76,37 +88,52 @@ export const createFlutterProject = async () => {
     });
   }
 
-  let hasEnvironmentVariables = await select({
-    message: 'Adicionar variáveis de ambiente?',
-    choices: [
-      {
-        name: 'Sim',
-        value: 'Sim',
-        description: 'Adicionar variáveis de ambiente',
-      },
-      {
-        name: 'Não',
-        value: 'Nao',
-        description: 'Não adicionar variáveis de ambiente',
-      },
-    ],
-  });
-
-  if(hasEnvironmentVariables == 'Sim') {
-    variables = await input({
-      message: 'Informe as variaveis de ambiente (Ex.: VARIAVEL=valor, VARIAVEL2=valor2):',
+  if(project_type != 'package') {
+    primaryColor = await input({
+      message: 'Informe a cor principal do tema:',
       validate: (value) =>
         new Promise((resolve) => {
           setTimeout(
-            () => resolve(value != '' && value != undefined || 'Informe as variaveis!'),
+            () => resolve(value != '' && value != undefined || 'Informe a cor!'),
             200,
           );
         }),
     });
+
+    hasEnvironmentVariables = await select({
+      message: 'Adicionar variáveis de ambiente?',
+      choices: [
+        {
+          name: 'Sim',
+          value: 'Sim',
+          description: 'Adicionar variáveis de ambiente',
+        },
+        {
+          name: 'Não',
+          value: 'Nao',
+          description: 'Não adicionar variáveis de ambiente',
+        },
+      ],
+    });
+
+    if(hasEnvironmentVariables == 'Sim') {
+      variables = await input({
+        message: 'Informe as variaveis de ambiente (Ex.: VARIAVEL=valor, VARIAVEL2=valor2):',
+        validate: (value) =>
+          new Promise((resolve) => {
+            setTimeout(
+              () => resolve(value != '' && value != undefined || 'Informe as variaveis!'),
+              200,
+            );
+          }),
+      });
+    }
+
+
   }
 
 
-  execCommand(solution, project_name, organization, project_type, multi_packages, variables);
+  execCommand(solution, project_name, organization, project_type, multi_packages, variables, primaryColor, project_title);
 
 
 }

@@ -3,7 +3,12 @@ import { promises as fs } from 'fs';
 export const generateVsCodeConfiguration = async (solution_name, variables) => {
     let json = _createVsCodeConfigurationJson(variables);
 
-    await fs.mkdir(`${solution_name}/.vscode`);
+
+    try{
+        await fs.access(`${solution_name}/.vscode`);
+    }catch(err){
+        await fs.mkdir(`${solution_name}/.vscode`);
+    }
 
     await fs.writeFile(`${solution_name}/.vscode/launch.json`, JSON.stringify(json, null, 2));
 }
