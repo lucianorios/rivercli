@@ -57,9 +57,17 @@ export const execCommand = async (solution_name, project_name, organization, pro
         }
       }
 
+      spinner.succeed(chalk.green("Projeto criado com sucesso!"));
 
+      try{
+      const spinner2 = ora(`Configurando projeto...`).start(); // Start the spinner
 
-      spinner.succeed(chalk.green("Done!"));
+      await exec(`cd ${solution_name} && flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs && code .`);
+
+      spinner2.succeed(chalk.green("Projeto configurado com sucesso!"));
+      }catch(er){
+        throw er;
+      }
     }catch(err){
       console.log(err);
       spinner.fail(chalk.red(err));

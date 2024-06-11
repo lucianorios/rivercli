@@ -119,17 +119,19 @@ export const createFlutterProject = async () => {
     if(hasEnvironmentVariables == 'Sim') {
       variables = await input({
         message: 'Informe as variaveis de ambiente (Ex.: VARIAVEL=valor, VARIAVEL2=valor2):',
-        validate: (value) =>
+        /*validate: (value) =>
           new Promise((resolve) => {
             setTimeout(
               () => resolve(value != '' && value != undefined || 'Informe as variaveis!'),
               200,
             );
-          }),
+          }),*/
       });
     }
 
-
+    if(variables == '') {
+      variables = 'API_URL=https://swapi.dev/api/';
+    }
   }
 
 

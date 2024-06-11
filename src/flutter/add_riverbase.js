@@ -1,5 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import yaml from 'yaml';
+
 
 export const addRiverbase = async (solution_name) => {
     try{
@@ -7,19 +9,15 @@ export const addRiverbase = async (solution_name) => {
 
         const data = await fs.readFile(filePath, 'utf-8');
 
-        const lines = data.split('\n');
+        const pubspec = yaml.parse(data);
 
-        const index = lines.findIndex(line => line.trim() === 'dev_dependencies:');
+        pubspec.dependencies = pubspec.dependencies || {};
 
-        if (index !== -1) {
-            lines.splice(index, 0, '  flutter_riverbase:\n    git: https://github.com/lucianorios/flutter_riverbase.git\n\n');
-        } else {
-            throw new Error('"dev_dependencies:" não encontrado no arquivo.');
-        }
+        pubspec.dependencies['flutter_riverbase'] = { git: 'https://github.com/lucianorios/flutter_riverbase.git' };
 
-        const newData = lines.join('\n');
+        const newYaml = yaml.stringify(pubspec);
 
-        await fs.writeFile(filePath, newData, 'utf-8');
+        await fs.writeFile(filePath, newYaml, 'utf-8');
     } catch (err) {
         console.error(`Erro ao processar o arquivo: ${err.message}`);
     }

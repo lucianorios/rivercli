@@ -16,18 +16,18 @@ export const generateEnvironmentConfiguration = async (solution_name, variables)
 
 const _createEnvironmentConfigurationClass = (variables) => {
     let content = `
-    class Environment{
+    class AppEnvironment{
 
         ${variables.map(variable => `late String _${variable.property};`).join('\n        ')}
 
         ${variables.map(variable => `String get ${variable.property} => _${variable.property};`).join('\n        ')}
 
-        static Environment get instance => _instance;
-        static final Environment _instance = Environment._internal();
+        static AppEnvironment get instance => _instance;
+        static final AppEnvironment _instance = AppEnvironment._internal();
 
-        factory Environment() => _instance;
+        factory AppEnvironment() => _instance;
 
-        Environment._internal() {
+        AppEnvironment._internal() {
             init();
         }
 

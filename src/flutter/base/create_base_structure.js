@@ -1,5 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import yaml from 'yaml';
+
 import { createTheme } from './create_theme.js';
 import { createMain } from './create_main.js';
 import { createAppConfig } from './create_app_config.js';
@@ -17,6 +19,8 @@ export const createBaseStructure = async (solution_name, primaryColor, project_n
 
     await fs.mkdir(`${solution_name}/lib/shared`);
 
+    await fs.mkdir(`${solution_name}/assets/images`,{ recursive: true });
+
     await createTheme(solution_name, primaryColor);
 
     await createAppConfig(solution_name);
@@ -27,7 +31,7 @@ export const createBaseStructure = async (solution_name, primaryColor, project_n
 
     await createMyapp(solution_name, project_name, project_title);
 
-    await createHome(solution_name, project_name);
+    await createHome(solution_name, project_name, project_title);
 
     await createSplashScreen(solution_name, project_name);
 
@@ -40,19 +44,45 @@ export const addDependences = async (solution_name) => {
 
         const data = await fs.readFile(filePath, 'utf-8');
 
-        const lines = data.split('\n');
+        const pubspec = yaml.parse(data);
 
-        const index = lines.findIndex(line => line.trim() === 'sdk: flutter');
-
-        if (index !== -1) {
-            lines.splice(index + 1, 0, `\n  flutter_localizations:\n    sdk: flutter\n\n  json_annotation:\n  provider:\n`);
-        } else {
-            throw new Error('"dev_dependencies:" não encontrado no arquivo.');
+        pubspec.dependencies = pubspec.dependencies || {};
+        if (!pubspec.dependencies['flutter']) {
+            pubspec.dependencies['flutter'] = { sdk: 'flutter' };
+        }
+        if (!pubspec.dependencies['flutter_localizations']) {
+            pubspec.dependencies['flutter_localizations'] = { sdk: 'flutter' };
+        }
+        if (!pubspec.dependencies['cupertino_icons']) {
+            pubspec.dependencies['cupertino_icons'] = '^1.0.6';
         }
 
-        const newData = lines.join('\n');
+        pubspec.dependencies['json_annotation'] = '^4.9.0';
+        pubspec.dependencies['provider'] = '^6.1.2';
 
-        await fs.writeFile(filePath, newData, 'utf-8');
+
+        pubspec.dev_dependencies = pubspec.dev_dependencies || {};
+        if (!pubspec.dev_dependencies['flutter_test']) {
+            pubspec.dev_dependencies['flutter_test'] = { sdk: 'flutter' };
+        }
+        if (!pubspec.dev_dependencies['flutter_lints']) {
+            pubspec.dev_dependencies['flutter_lints'] = '^4.0.0';
+        }
+
+        pubspec.dev_dependencies = pubspec.dev_dependencies || {};
+        pubspec.dev_dependencies['build_runner'] = '^2.4.11';
+        pubspec.dev_dependencies['json_serializable'] = '^6.8.0';
+
+
+        pubspec.flutter = pubspec.flutter || {};
+        pubspec.flutter.assets = pubspec.flutter.assets || [];
+        if (!pubspec.flutter.assets.includes('assets/images/')) {
+        pubspec.flutter.assets.push('assets/images/');
+        }
+
+        const newYaml = yaml.stringify(pubspec);
+
+        await fs.writeFile(filePath, newYaml, 'utf-8');
     } catch (err) {
         console.error(`Erro ao processar o arquivo: ${err.message}`);
     }
